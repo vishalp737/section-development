@@ -2,8 +2,13 @@
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
 {{ 'component-slideshow.css' | asset_url | stylesheet_tag }}
 
-{%- if section.settings.slide_height == 'adapt_image' and section.blocks.first.settings.image != blank -%}
-  {%- style -%}
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+{%- style -%}
+  .section-{{ section.id }} {
+    position: relative;
+  }
+  {%- if section.settings.slide_height == 'adapt_image' and section.blocks.first.settings.image != blank -%}
     @media screen and (max-width: 749px) {
       #Slider-{{ section.id }}::before,
       #Slider-{{ section.id }} .media::before,
@@ -22,244 +27,162 @@
         display: block;
       }
     }
-  {%- endstyle -%}
-{%- endif -%}
-
-<slideshow-component
-  class="slider-mobile-gutter{% if section.settings.layout == 'grid' %} page-width{% endif %}{% if section.settings.show_text_below %} mobile-text-below{% endif %}"
-  role="region"
-  aria-roledescription="{{ 'sections.slideshow.carousel' | t }}"
-  aria-label="{{ section.settings.accessibility_info | escape }}"
->
-  {%- if section.settings.auto_rotate and section.blocks.size > 1 -%}
-    <div class="slideshow__controls slideshow__controls--top slider-buttons{% if section.settings.show_text_below %} slideshow__controls--border-radius-mobile{% endif %}">
-      <button
-        type="button"
-        class="slider-button slider-button--prev"
-        name="previous"
-        aria-label="{{ 'sections.slideshow.previous_slideshow' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-      <div class="slider-counter slider-counter--{{ section.settings.slider_visual }}{% if section.settings.slider_visual == 'counter' or section.settings.slider_visual == 'numbers' %} caption{% endif %}">
-        {%- if section.settings.slider_visual == 'counter' -%}
-          <span class="slider-counter--current">1</span>
-          <span aria-hidden="true"> / </span>
-          <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
-          <span class="slider-counter--total">{{ section.blocks.size }}</span>
-        {%- else -%}
-          <div class="slideshow__control-wrapper">
-            {%- for block in section.blocks -%}
-              <button
-                class="slider-counter__link slider-counter__link--{{ section.settings.slider_visual }} link"
-                aria-label="{{ 'sections.slideshow.load_slide' | t }} {{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}"
-                aria-controls="Slider-{{ section.id }}"
-              >
-                {%- if section.settings.slider_visual == 'numbers' -%}
-                  {{ forloop.index -}}
-                {%- else -%}
-                  <span class="dot"></span>
-                {%- endif -%}
-              </button>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      </div>
-      <button
-        type="button"
-        class="slider-button slider-button--next"
-        name="next"
-        aria-label="{{ 'sections.slideshow.next_slideshow' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-
-      {%- if section.settings.auto_rotate -%}
-        <button
-          type="button"
-          class="slideshow__autoplay slider-button{% if section.settings.auto_rotate == false %} slideshow__autoplay--paused{% endif %}"
-          aria-label="{{ 'sections.slideshow.pause_slideshow' | t }}"
-        >
-          <span class="svg-wrapper">
-            {{- 'icon-pause.svg' | inline_asset_content -}}
-          </span>
-          <span class="svg-wrapper">
-            {{- 'icon-play.svg' | inline_asset_content -}}
-          </span>
-        </button>
-      {%- endif -%}
-    </div>
   {%- endif -%}
+{%- endstyle -%}
 
+<div class="section-{{ section.id }} {% if section.settings.layout == 'grid' %} page-width{% endif %}{% if section.settings.show_text_below %} mobile-text-below{% endif %}">
   <div
-    class="slideshow banner banner--{{ section.settings.slide_height }} grid grid--1-col slider slider--everywhere{% if section.settings.show_text_below %} banner--mobile-bottom{% endif %}{% if section.blocks.first.settings.image == blank %} slideshow--placeholder{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+    class="slideshow banner banner--{{ section.settings.slide_height }} swiper{% if section.settings.show_text_below %} banner--mobile-bottom{% endif %}{% if section.blocks.first.settings.image == blank %} slideshow--placeholder{% endif %}"
     id="Slider-{{ section.id }}"
-    aria-live="polite"
-    aria-atomic="true"
-    data-autoplay="{{ section.settings.auto_rotate }}"
-    data-speed="{{ section.settings.change_slides_speed }}"
   >
-    {%- for block in section.blocks -%}
-      <style>
-        #Slide-{{ section.id }}-{{ forloop.index }} .banner__media::after {
-          opacity: {{ block.settings.image_overlay_opacity | divided_by: 100.0 }};
-        }
-      </style>
-      <div
-        class="slideshow__slide grid__item grid--1-col slider__slide"
-        id="Slide-{{ section.id }}-{{ forloop.index }}"
-        {{ block.shopify_attributes }}
-        role="group"
-        aria-roledescription="{{ 'sections.slideshow.slide' | t }}"
-        aria-label="{{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}"
-        tabindex="-1"
-      >
-        <div class="slideshow__media banner__media media{% if block.settings.image == blank %} placeholder{% endif %}{% if section.settings.image_behavior != 'none' %} animate--{{ section.settings.image_behavior }}{% endif %}">
-          {%- if block.settings.image -%}
-            {%- liquid
-              assign height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio | round
-              if section.settings.image_behavior == 'ambient'
-                assign sizes = '120vw'
-                assign widths = '450, 660, 900, 1320, 1800, 2136, 2400, 3600, 7680'
-              else
-                assign sizes = '100vw'
-                assign widths = '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
-              endif
-              assign fetch_priority = 'auto'
-              if section.index == 1
-                assign fetch_priority = 'high'
-              endif
-            -%}
-            {%- if forloop.first %}
-              {{
-                block.settings.image
-                | image_url: width: 3840
-                | image_tag: height: height, sizes: sizes, widths: widths, fetchpriority: fetch_priority
-              }}
-            {%- else -%}
-              {{
-                block.settings.image
-                | image_url: width: 3840
-                | image_tag: loading: 'lazy', height: height, sizes: sizes, widths: widths
-              }}
-            {%- endif -%}
-          {%- else -%}
-            {%- assign placeholder_slide = forloop.index | modulo: 2 -%}
-            {%- if placeholder_slide == 1 -%}
-              {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
-            {%- else -%}
-              {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
-            {%- endif -%}
-          {%- endif -%}
-        </div>
-        <div class="slideshow__text-wrapper banner__content banner__content--{{ block.settings.box_align }} page-width{% if block.settings.show_text_box == false %} banner--desktop-transparent{% endif %}{% if settings.animations_reveal_on_scroll and forloop.index == 1 %} scroll-trigger animate--slide-in{% endif %}">
-          <div class="slideshow__text banner__box content-container content-container--full-width-mobile color-{{ block.settings.color_scheme }} gradient slideshow__text--{{ block.settings.text_alignment }} slideshow__text-mobile--{{ block.settings.text_alignment_mobile }}">
-            {%- if block.settings.heading != blank -%}
-              <h2 class="banner__heading inline-richtext {{ block.settings.heading_size }}">
-                {{ block.settings.heading }}
-              </h2>
-            {%- endif -%}
-            {%- if block.settings.subheading != blank -%}
-              <div class="banner__text rte">
-                <p>{{ block.settings.subheading }}</p>
-              </div>
-            {%- endif -%}
-            {%- if block.settings.button_label != blank -%}
-              <div class="banner__buttons">
-                <a
-                  {% if block.settings.link %}
-                    href="{{ block.settings.link }}"
-                  {% else %}
-                    role="link" aria-disabled="true"
-                  {% endif %}
-                  class="button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}"
-                >
-                  {{- block.settings.button_label | escape -}}
-                </a>
-              </div>
-            {%- endif -%}
-          </div>
-        </div>
-      </div>
-    {%- endfor -%}
-  </div>
-
-  {%- if section.blocks.size > 1 and section.settings.auto_rotate == false -%}
-    <div class="slideshow__controls slider-buttons{% if section.settings.show_text_below %} slideshow__controls--border-radius-mobile{% endif %}">
-      <button
-        type="button"
-        class="slider-button slider-button--prev"
-        name="previous"
-        aria-label="{{ 'sections.slideshow.previous_slideshow' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-      <div class="slider-counter slider-counter--{{ section.settings.slider_visual }}{% if section.settings.slider_visual == 'counter' or section.settings.slider_visual == 'numbers' %} caption{% endif %}">
-        {%- if section.settings.slider_visual == 'counter' -%}
-          <span class="slider-counter--current">1</span>
-          <span aria-hidden="true"> / </span>
-          <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
-          <span class="slider-counter--total">{{ section.blocks.size }}</span>
-        {%- else -%}
-          <div class="slideshow__control-wrapper">
-            {%- for block in section.blocks -%}
-              <button
-                class="slider-counter__link slider-counter__link--{{ section.settings.slider_visual }} link"
-                aria-label="{{ 'sections.slideshow.load_slide' | t }} {{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}"
-                aria-controls="Slider-{{ section.id }}"
-              >
-                {%- if section.settings.slider_visual == 'numbers' -%}
-                  {{ forloop.index -}}
-                {%- else -%}
-                  <span class="dot"></span>
-                {%- endif -%}
-              </button>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      </div>
-      <button
-        type="button"
-        class="slider-button slider-button--next"
-        name="next"
-        aria-label="{{ 'sections.slideshow.next_slideshow' | t }}"
-        aria-controls="Slider-{{ section.id }}"
-      >
-        <span class="svg-wrapper">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-
-      {%- if section.settings.auto_rotate -%}
-        <button
-          type="button"
-          class="slideshow__autoplay slider-button{% if section.settings.auto_rotate == false %} slideshow__autoplay--paused{% endif %}"
-          aria-label="{{ 'sections.slideshow.pause_slideshow' | t }}"
+    <div class="swiper-wrapper">
+      {%- for block in section.blocks -%}
+        <div class="swiper-slide">
+        <div
+          class="slideshow__slide slider__slide ovlshw_{{block.settings.opacity_effect}}"
+          id="Slide-{{ section.id }}-{{ forloop.index }}"
+          {{ block.shopify_attributes }}
+          role="group"
+          aria-roledescription="{{ 'sections.slideshow.slide' | t }}"
+          aria-label="{{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}"
+          tabindex="-1"
         >
-          <span class="svg-wrapper">
-            {{- 'icon-pause.svg' | inline_asset_content -}}
-          </span>
-          <span class="svg-wrapper">
-            {{- 'icon-play.svg' | inline_asset_content -}}
-          </span>
-        </button>
-      {%- endif -%}
+          <div class="slideshow__media banner__media media{% if block.settings.image == blank %} placeholder{% endif %}">
+            {%- if block.settings.main_bg or block.settings.main_video_bg -%}
+              {% if forloop.first %}
+                {% render 'ctm-media',
+                  class: 'ctm_ssow_top',
+                  video: block.settings.main_video_bg,
+                  mob_video: block.settings.mob_video_bg,
+                  image: block.settings.main_bg,
+                  mob_image: block.settings.main_mobile_bg,
+                  enable_looping: block.settings.enable_video_looping,
+                  heading: block.settings.heading,
+                  loading: 'eager',
+                  fetchpriority: 'high'
+                %}
+              {% else %}
+                {% render 'ctm-media',
+                  class: 'ctm_ssow_top',
+                  video: block.settings.main_video_bg,
+                  mob_video: block.settings.mob_video_bg,
+                  image: block.settings.main_bg,
+                  mob_image: block.settings.main_mobile_bg,
+                  enable_looping: block.settings.enable_video_looping,
+                  heading: block.settings.heading,
+                  loading: 'lazy',
+                  fetchpriority: 'auto'
+                %}
+              {% endif %}
+            {%- else -%}
+              {%- assign placeholder_slide = forloop.index | modulo: 2 -%}
+              {%- if placeholder_slide == 1 -%}
+                {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- else -%}
+                {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+          <div class="slideshow__text-wrapper banner__content banner__content--{{ block.settings.box_align }} page-width{% if block.settings.show_text_box == false %} banner--desktop-transparent{% endif %}">
+            <div class="slideshow__text banner__box content-container content-container--full-width-mobile color-{{ block.settings.color_scheme }} slideshow__text--{{ block.settings.text_alignment }} slideshow__text-mobile--{{ block.settings.text_alignment_mobile }}">
+              {%- if block.settings.heading != blank -%}
+                {% if block.settings.heading_size == 'h1' %}
+                  <h1 class="banner__heading inline-richtext">{{ block.settings.heading }}</h1>
+                {% else %}
+                  <h2 class="banner__heading inline-richtext">{{ block.settings.heading }}</h2>
+                {% endif %}
+              {%- endif -%}
+              {%- if block.settings.subheading != blank -%}
+                <div class="banner__text rte">
+                  {{ block.settings.subheading }}
+                </div>
+              {%- endif -%}
+              {%- if block.settings.button_label != blank or block.settings.sbutton_label != blank -%}
+                <div class="banner__buttons">
+                  <a
+                    {% if block.settings.link %}
+                      href="{{ block.settings.link }}"
+                    {% else %}
+                      role="link" aria-disabled="true"
+                    {% endif %}
+                    class="button button--primary"
+                  >
+                    {{- block.settings.button_label | escape -}}
+                  </a>
+                  <a
+                    {% if block.settings.slink %}
+                      href="{{ block.settings.slink }}"
+                    {% else %}
+                      role="link" aria-disabled="true"
+                    {% endif %}
+                    class="button button--secondary"
+                  >
+                    {{- block.settings.sbutton_label | escape -}}
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+          <style>
+            {% if block.settings.opacity_effect == 'fullscreen' %}
+            #Slide-{{ section.id }}-{{ forloop.index }} .banner__media::after {
+              opacity: {{ block.settings.image_overlay_opacity | divided_by: 100.0 }};
+            }
+            {% endif %}
+            @media (max-width: 749px){
+              {% if block.settings.mobile_overlay == true %}
+               #Slide-{{ section.id }}-{{ forloop.index }} .banner__media::after {
+                opacity: 1;
+                background: #0009;
+              }
+              {% else %}
+               #Slide-{{ section.id }}-{{ forloop.index }} .banner__media::after {
+                opacity: 0;
+              }
+              {% endif %}
+            }
+            {% if block.settings.shadow_color == true %}
+              #Slide-{{ section.id }}-{{ forloop.index }} h1,
+              #Slide-{{ section.id }}-{{ forloop.index }} h2,
+              #Slide-{{ section.id }}-{{ forloop.index }} p {
+                -webkit-text-stroke: 2px {{ block.settings.text_shadow_color }};
+                text-shadow: 0 0 2px {{ block.settings.text_shadow_color }}, 0 0 10px {{ block.settings.text_shadow_color }}, 0 0 2px {{ block.settings.text_shadow_color }}, 0 0 5px {{ block.settings.text_shadow_color }};
+              }
+            {%endif %}
+          </style>
+        </div>
+        </div>
+      {%- endfor -%}
     </div>
-  {%- endif -%}
-</slideshow-component>
+    </div>
+    {%- if section.settings.show_slider_nav == true -%}
+      <div class="swiper-button-prev">{{- 'icon-caret.svg' | inline_asset_content -}}</div>
+      <div class="swiper-button-next">{{- 'icon-caret.svg' | inline_asset_content -}}</div>
+    {% endif %}
+    {%- if section.settings.slider_dots == true -%}<div class="swiper-pagination"></div>{% endif %}
+</div>
 
-{%- if request.design_mode -%}
-  <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
-{%- endif -%}
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  new Swiper('.section-{{ section.id }} .slideshow', {
+        loop: true,
+        slidesPerView: 1,
+        autoplay: {{section.settings.auto_rotate}},{%- if section.settings.auto_rotate == true -%}
+        speed: 700,
+        autoplay: {
+          delay: {{ section.settings.change_slides_speed }}000
+        },{% endif %}
+        {%- if section.settings.show_slider_nav == true -%}
+          navigation: {
+            nextEl: '.section-{{ section.id }} .swiper-button-next',
+            prevEl: '.section-{{ section.id }} .swiper-button-prev',
+        },{% endif %}
+        {%- if section.settings.slider_dots == true -%} pagination: {
+            el: '.section-{{ section.id }} .swiper-pagination',
+            clickable: true
+        }{% endif %}
+    });
+</script>
 
 {% schema %}
 {
@@ -311,6 +234,18 @@
       "label": "t:sections.slideshow.settings.slide_height.label"
     },
     {
+      "type": "checkbox",
+      "id": "show_slider_nav",
+      "label": "Show slider navigation",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "slider_dots",
+      "label": "Show slider navigation dots",
+      "default": true
+    },
+    {
       "type": "select",
       "id": "slider_visual",
       "options": [
@@ -328,7 +263,8 @@
         }
       ],
       "default": "counter",
-      "label": "t:sections.slideshow.settings.slider_visual.label"
+      "label": "slider navigation style",
+      "visible_if": "{{ section.settings.show_slider_nav == true }}"
     },
     {
       "type": "checkbox",
@@ -344,23 +280,8 @@
       "step": 2,
       "unit": "s",
       "label": "t:sections.slideshow.settings.change_slides_speed.label",
-      "default": 5
-    },
-    {
-      "type": "select",
-      "id": "image_behavior",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:sections.all.animation.image_behavior.options__1.label"
-        },
-        {
-          "value": "ambient",
-          "label": "t:sections.all.animation.image_behavior.options__2.label"
-        }
-      ],
-      "default": "none",
-      "label": "t:sections.all.animation.image_behavior.label"
+      "default": 5,
+      "visible_if": "{{ section.settings.auto_rotate == true }}"
     },
     {
       "type": "header",
@@ -391,23 +312,116 @@
       "limit": 5,
       "settings": [
         {
+          "type": "select",
+          "id": "vid_image",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image",
+          "label": "Select an image or video for background",
+          "info": "Adding video will replace background with an image"
+        },
+        {
           "type": "image_picker",
-          "id": "image",
-          "label": "t:sections.slideshow.blocks.slide.settings.image.label"
+          "id": "main_bg",
+          "label": "Background image",
+          "visible_if": "{{ block.settings.vid_image == 'image' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "main_mobile_bg",
+          "label": "Mobile Background image",
+          "visible_if": "{{ block.settings.vid_image == 'image' }}",
+          "info": "If this image is not added, the desktop image will be used automatically."
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_video_looping",
+          "label": "Video playing in the loop",
+          "default": false,
+          "visible_if": "{{ block.settings.vid_image == 'video' }}"
+        },
+        {
+          "type": "video",
+          "id": "main_video_bg",
+          "label": "Video",
+          "visible_if": "{{ block.settings.vid_image == 'video' }}"
+        },
+        {
+          "type": "video",
+          "id": "mob_video_bg",
+          "label": "Responsive Video",
+          "visible_if": "{{ block.settings.vid_image == 'video' }}",
+          "info": "If this video is not added, the desktop video will be used automatically."
+        },
+        {
+          "type": "select",
+          "id": "opacity_effect",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "ltr",
+              "label": "Left to Right"
+            },
+            {
+              "value": "rtl",
+              "label": "Right to Left"
+            },
+            {
+              "value": "fullscreen",
+              "label": "All over banner"
+            }
+          ],
+          "default": "none",
+          "label": "Banner overlay effect",
+          "info": "Select an effect to add an overlay on the banner image for desktop screens."
         },
         {
           "type": "range",
           "id": "image_overlay_opacity",
           "min": 0,
-          "max": 100,
-          "step": 10,
+          "max": 90,
+          "step": 5,
           "unit": "%",
           "label": "t:sections.slideshow.blocks.slide.settings.image_overlay_opacity.label",
-          "default": 0
+          "default": 0,
+          "visible_if": "{{ block.settings.opacity_effect == 'fullscreen' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile_overlay",
+          "label": "Show overlay over banner in Mobile",
+          "default": false
         },
         {
           "type": "header",
           "content": "t:sections.slideshow.blocks.slide.settings.header_text.content"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h1",
+              "label": "h1"
+            },
+            {
+              "value": "h2",
+              "label": "h2"
+            }
+          ],
+          "default": "h2",
+          "label": "t:sections.all.heading_size.label"
         },
         {
           "type": "inline_richtext",
@@ -416,48 +430,38 @@
           "label": "t:sections.slideshow.blocks.slide.settings.heading.label"
         },
         {
-          "type": "select",
-          "id": "heading_size",
-          "options": [
-            {
-              "value": "h2",
-              "label": "t:sections.all.heading_size.options__1.label"
-            },
-            {
-              "value": "h1",
-              "label": "t:sections.all.heading_size.options__2.label"
-            },
-            {
-              "value": "h0",
-              "label": "t:sections.all.heading_size.options__3.label"
-            },
-            {
-              "value": "hxl",
-              "label": "t:sections.all.heading_size.options__4.label"
-            },
-            {
-              "value": "hxxl",
-              "label": "t:sections.all.heading_size.options__5.label"
-            }
-          ],
-          "default": "h1",
-          "label": "t:sections.all.heading_size.label"
-        },
-        {
-          "type": "inline_richtext",
+          "type": "richtext",
           "id": "subheading",
           "default": "t:sections.slideshow.blocks.slide.settings.subheading.default",
           "label": "t:sections.slideshow.blocks.slide.settings.subheading.label"
         },
         {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
+        },
+        {
+          "type": "checkbox",
+          "id": "shadow_color",
+          "label": "Text Shadow Color Apply",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "text_shadow_color",
+          "label": "Text Shadow Color",
+          "visible_if": "{{ block.settings.shadow_color == true }}"
+        },
+        {
           "type": "header",
-          "content": "t:sections.slideshow.blocks.slide.settings.header_button.content"
-        },        
+          "content": "Primary Button"
+        },
         {
           "type": "text",
           "id": "button_label",
           "default": "t:sections.slideshow.blocks.slide.settings.button_label.default",
-          "label": "t:sections.slideshow.blocks.slide.settings.button_label.label", 
+          "label": "t:sections.slideshow.blocks.slide.settings.button_label.label",
           "info": "t:sections.slideshow.blocks.slide.settings.button_label.info"
         },
         {
@@ -466,15 +470,24 @@
           "label": "t:sections.slideshow.blocks.slide.settings.link.label"
         },
         {
-          "type": "checkbox",
-          "id": "button_style_secondary",
-          "label": "t:sections.slideshow.blocks.slide.settings.secondary_style.label",
-          "default": false
+          "type": "header",
+          "content": "Secondary Button"
+        },
+        {
+          "type": "text",
+          "id": "sbutton_label",
+          "label": "t:sections.slideshow.blocks.slide.settings.button_label.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.button_label.info"
+        },
+        {
+          "type": "url",
+          "id": "slink",
+          "label": "t:sections.slideshow.blocks.slide.settings.link.label"
         },
         {
           "type": "header",
           "content": "t:sections.slideshow.blocks.slide.settings.header_layout.content"
-        },         
+        },
         {
           "type": "checkbox",
           "id": "show_text_box",
@@ -564,12 +577,6 @@
           ],
           "default": "center",
           "label": "t:sections.slideshow.blocks.slide.settings.text_alignment_mobile.label"
-        },        
-        {
-          "type": "color_scheme",
-          "id": "color_scheme",
-          "label": "t:sections.all.colors.label",
-          "default": "scheme-1"
         }
       ]
     }

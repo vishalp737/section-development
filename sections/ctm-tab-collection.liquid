@@ -1,0 +1,506 @@
+<!-- sections/ctm-tab-collection -->
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+{{ 'section-featured-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+{{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+{{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
+{{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+{{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
+    
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+
+{{ 'section--tab-collection.css' | asset_url | stylesheet_tag }}
+
+{%- unless section.settings.quick_add == 'none' -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endunless -%}
+
+{%- if section.settings.quick_add == 'standard' -%}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.re_padding_top }}px;
+    padding-bottom: {{ section.settings.re_padding_bottom }}px;
+  }
+
+  @media (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+   @media (min-width: 1401px) {
+  .section-{{ section.id }}-padding .tg_slides_five .swiper-button-prev,
+  .section-{{ section.id }}-padding .tg_slides_five .swiper-button-next{
+    display: none;
+  }
+  }
+{%- endstyle -%}
+
+<div
+  class="ctm_tbcols ctm-swiper-arrow section-{{ section.id }}-padding {{ section.settings.extra_class }}"
+  data-featured-collection
+>
+  <div class="page-width">
+    {% if section.settings.section_heading != blank %}
+      <div class="section-heading">
+        <h2 class="tab-title">{{ section.settings.section_heading }}</h2>
+      </div>
+    {% endif %}
+
+    {% if section.settings.section_subheading != blank %}
+      <div class="section-subheading">
+        {{ section.settings.section_subheading }}
+      </div>
+    {% endif %}
+
+    <div class="tags-tabs" data-content>
+      <div class="tabs-menu_main">
+        <div class="tabs-menu">
+          {% for block in section.blocks %}
+            {% if block.type == 'category' %}
+              <button class="tab-button {% if forloop.first %}active{% endif %}" data-tag="{{ block.id }}">
+                {% if block.settings.title != blank %}
+                  {{ block.settings.title }}
+                {% else %}
+                  {{ collection.title }}
+                {% endif %}
+              </button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="tabs-content tabbed_contents">
+        {% for block in section.blocks %}
+          {% if block.type == 'category' %}
+            <div
+              class="tab-content tab-content_{{ block.id }} {% if forloop.first %}active{% endif %}"
+              data-tag="{{ block.id }}"
+            >
+              {% assign collection = collections[block.settings.collection] %}
+              <div class="product-grid{% if collection.products.size < 6 or block.settings.product_limit < 6 %} tg_slides_five {% endif %}">
+                {% if block.settings.col_pdp == true %}
+                  <div class="tags_slider_{{ block.id }} swiper productgrid--item{% if collection.products.size < 6 or block.settings.product_limit < 6 %} tg_slider_five {% endif %}">
+                    <div class="swiper-wrapper product-grid-list">
+                      {% if collection != blank %}
+                        {% if collection.products.size > 0 %}
+                          {% for product in collection.products limit: block.settings.product_limit %}
+                            <div class="swiper-slide grid__item tg_product_card">
+                              {% render 'card-product',
+                                media_aspect_ratio: 'square',
+                                image_shape: 'default',
+                                card_product: product,
+                                lazy_load: true,
+                                show_secondary_image: true,
+                                show_vendor: true,
+                                show_rating: true,
+                                section_id: section.id,
+                                quick_add: section.settings.quick_add
+                              %}
+                            </div>
+                          {% endfor %}
+                        {% else %}
+                          <p>
+                            We are currently adding products for the "
+                            {%- if block.settings.collection != blank -%}
+                              {{- block.settings.title -}}
+                            {%- else -%}
+                              {{- collection.title -}}
+                            {%- endif -%}
+                            " category
+                          </p>
+                        {% endif %}
+                      {% else %}
+                        <p class="no_product_found">
+                          No products found for "
+                          {{- block.settings.title -}}
+                          "
+                        </p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="swiper-button-prev">{{- 'icon-caret-left.svg' | inline_asset_content -}}</div>
+                  <div class="swiper-button-next">{{- 'icon-caret-left.svg' | inline_asset_content -}}</div>
+                {% else %}
+                  {% assign product = all_products[block.settings.singleproduct] %}
+                  <product-info
+                    class="single_tab_prods "
+                    data-section="{{ block.id }}"
+                    data-product-id="{{ product.id }}"
+                    data-update-url="false"
+                    data-url="{{ product.url }}"
+                    {% if block.settings.image_zoom == 'hover' %}
+                      data-zoom-on-hover
+                    {% endif %}
+                  >
+                    <div class="single_prods_main featured-product product product--{{ section.settings.media_size }} grid grid--1-col product--{{ section.settings.media_position }}{% if product.media.size > 0 or section.settings.product == blank %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+                      {% render 'ctm-single-product', product: product, block: block %}
+                    </div>
+                  </product-info>
+                {% endif %}
+              </div>
+
+              {% if collection.products.size > 0 and section.settings.hide_shopall == false %}
+                <div class="ctm_tbcols_shop">
+                  <a
+                    {% if collection.url %}
+                      href="{{ collection.url }}"
+                    {% else %}
+                      role="link" aria-disabled="true"
+                    {% endif %}
+                    {%- if block.settings.collection != blank -%}
+                      title="{{- block.settings.title | strip_html -}}"
+                    {%- else -%}
+                      title="{{- collection.title | strip_html -}}"
+                    {%- endif -%}
+                    class="button button-primary"
+                  >
+                    <span> Shop {{ block.settings.title -}}</span>
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.section-{{ section.id }}-padding .tab-button');
+    const contents = document.querySelectorAll('.section-{{ section.id }}-padding .tab-content');
+    const tabsMenu = document.querySelector('.section-{{ section.id }}-padding .tabs-menu');
+
+    function centerActiveTab(tab) {
+      if (tabsMenu && tab) {
+        const tabRect = tab.getBoundingClientRect();
+        const containerRect = tabsMenu.getBoundingClientRect();
+        const scrollLeft = tabsMenu.scrollLeft;
+        const offset = tabRect.left - containerRect.left + (tabRect.width / 2) - (containerRect.width / 2);
+        tabsMenu.scrollTo({
+          left: scrollLeft + offset,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        let targetTag = tab.getAttribute('data-tag');
+
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.querySelector('.section-{{ section.id }}-padding .tab-content[data-tag="' + targetTag + '"]').classList.add('active');
+
+        centerActiveTab(tab);
+      });
+    });
+
+    // Center the first active tab on load
+    const firstActive = document.querySelector('.section-{{ section.id }}-padding .tab-button.active');
+    if (firstActive) {
+      centerActiveTab(firstActive);
+    }
+
+  });
+
+  {% for block in section.blocks %}
+          {% if block.type == 'category' %}
+            {% if block.settings.col_pdp == true %}
+      new Swiper('.tags_slider_{{ block.id }}', {
+          loop: false,
+          slidesPerView: 6,
+          navigation: {
+          nextEl: '.tab-content_{{ block.id }} .swiper-button-next',
+          prevEl: '.tab-content_{{ block.id }} .swiper-button-prev',
+      },
+          paginationClickable: true,
+          spaceBetween: 20,
+          autoplay: false,
+          watchOverflow: true,
+          breakpoints: {
+              1920: {
+                  slidesPerView: 6,
+                  spaceBetween: 20
+              },
+              1400: {
+                  slidesPerView: 5,
+                  spaceBetween: 20
+              },
+              1200: {
+                  slidesPerView: 4,
+                  spaceBetween: 20
+              },
+              769: {
+                  slidesPerView: 3,
+                  spaceBetween: 20
+              },
+              500: {
+                  slidesPerView: 2,
+                  spaceBetween: 20
+              },
+              200: {
+                  slidesPerView: 1,
+                  spaceBetween: 20
+              }
+          }
+      });
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+</script>
+
+{% schema %}
+{
+  "name": "Custom Tab Collection",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "section_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "section_subheading",
+      "label": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_shopall",
+      "label": "Hide shop all collection button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.featured-product.settings.header.content",
+      "info": "Media options are workn only in single product"
+    },
+    {
+      "type": "select",
+      "id": "media_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.main-product.settings.media_size.options__1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.main-product.settings.media_size.options__2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.main-product.settings.media_size.options__3.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.main-product.settings.media_size.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "constrain_to_viewport",
+      "default": true,
+      "label": "t:sections.main-product.settings.constrain_to_viewport.label"
+    },
+    {
+      "type": "select",
+      "id": "media_fit",
+      "options": [
+        {
+          "value": "contain",
+          "label": "t:sections.main-product.settings.media_fit.options__1.label"
+        },
+        {
+          "value": "cover",
+          "label": "t:sections.main-product.settings.media_fit.options__2.label"
+        }
+      ],
+      "default": "contain",
+      "label": "t:sections.main-product.settings.media_fit.label"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.featured-product.settings.media_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.featured-product.settings.media_position.options__2.label"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.featured-product.settings.media_position.label"
+    },
+    {
+      "type": "select",
+      "id": "image_zoom",
+      "options": [
+        {
+          "value": "lightbox",
+          "label": "t:sections.main-product.settings.image_zoom.options__1.label"
+        },
+        {
+          "value": "hover",
+          "label": "t:sections.main-product.settings.image_zoom.options__2.label"
+        },
+        {
+          "value": "none",
+          "label": "t:sections.main-product.settings.image_zoom.options__3.label"
+        }
+      ],
+      "default": "lightbox",
+      "label": "t:sections.main-product.settings.image_zoom.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_variants",
+      "default": false,
+      "label": "t:sections.main-product.settings.hide_variants.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "default": false,
+      "label": "t:sections.featured-product.settings.enable_video_looping.label"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "none",
+      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1"
+        },
+        {
+          "value": "standard",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "re_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Responsive Top spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "re_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Responsive Bottom Spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Options for Dev"
+    },
+    {
+      "type": "text",
+      "id": "extra_class",
+      "label": "Extra Class"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Collection Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "product",
+          "id": "singleproduct",
+          "label": "Select a product"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "t:sections.featured-product.blocks.buy_buttons.settings.show_dynamic_checkout.label",
+          "info": "t:sections.featured-product.blocks.buy_buttons.settings.show_dynamic_checkout.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "col_pdp",
+          "label": "Display collection products",
+          "info": "Selecting this checkbox will display the collection’s products instead of single products. To show collections, this checkbox must be checked.",
+          "default": true
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+        {
+          "type": "range",
+          "id": "product_limit",
+          "label": "Products per tab",
+          "min": 1,
+          "max": 20,
+          "default": 8,
+          "visible_if": "{{ block.settings.col_pdp == true }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Tab Collection"
+    }
+  ]
+}
+{% endschema %}
