@@ -85,9 +85,9 @@
           "type": "category",
           "settings": {
             "title": "",
-            "singleproduct": "",
+            "singleproduct": "adjustable-dumbbells-set-20kg",
             "show_dynamic_checkout": true,
-            "col_pdp": true,
+            "col_pdp": false,
             "collection": "books-media",
             "product_limit": 8
           }
@@ -148,7 +148,7 @@
       "settings": {
         "section_heading": "",
         "section_subheading": "",
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-1",
         "hide_shopall": false,
         "media_size": "medium",
         "constrain_to_viewport": true,
@@ -157,7 +157,7 @@
         "image_zoom": "lightbox",
         "hide_variants": false,
         "enable_video_looping": false,
-        "quick_add": "none",
+        "quick_add": "standard",
         "padding_top": 50,
         "padding_bottom": 50,
         "re_padding_top": 34,
