@@ -1,0 +1,41 @@
+/* .tags-tabs {
+  overflow-x: hidden;
+} */
+.tabs-menu {
+  margin-bottom: 15px;
+}
+.tab-button {
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  background: #f1f1f1;
+  border: 1px solid #ddd;
+  display: inline-block;
+}
+.tab-button.active {
+  background: #000;
+  color: #fff;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  position: relative;
+}
+.product-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+.ctm_tbcols .productgrid--item {
+  height: auto;
+  width: 100%;
+}
+.image-full {
+  max-width: 100%;
+}

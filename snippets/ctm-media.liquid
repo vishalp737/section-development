@@ -1,0 +1,71 @@
+{% assign class = class | default: settings.main_video_bg %}
+{% assign video = video | default: settings.main_video_bg %}
+{% assign mob_video = mob_video | default: settings.mob_video_bg %}
+{% assign image = image | default: settings.main_bg %}
+{% assign mob_image = mob_image | default: settings.main_mobile_bg %}
+{% assign enable_looping = enable_looping | default: settings.enable_video_looping %}
+{% assign heading = heading | default: '' %}
+{% assign loading = loading | default: 'lazy' %}
+{% assign fetchpriority = fetchpriority | default: 'auto' %}
+
+
+<div class="{{ class }}">
+  {% if video != blank %}
+    {% assign desktop_video_class = 'max-w-full h-auto' %}
+    {% if mob_video != blank %}
+      {% assign desktop_video_class = 'desktop_only max-w-full h-auto' %}
+    {% endif %}
+    {{
+      video
+      | video_tag:
+        image_size: '1100x',
+        class: desktop_video_class,
+        loop: enable_looping,
+        controls: false,
+        autoplay: true,
+        muted: true
+    }}
+
+    {% if mob_video != blank %}
+      {{
+        mob_video
+        | video_tag:
+          image_size: '1100x',
+          class: 'mobile_only max-w-full h-auto',
+          loop: enable_looping,
+          controls: false,
+          autoplay: true,
+          muted: true
+      }}
+    {% endif %}
+    
+  {% elsif image != blank %}
+    
+    {% assign image_class = '' %}
+    {% if mob_image != blank %}
+      {% assign image_class = image_class | append: 'desktop_only ' %}
+    {% endif %}
+    {% assign image_class = image_class | append: 'max-w-full h-auto' %}
+    {{
+      image
+      | image_url: width: image.width
+      | image_tag: alt: heading, loading: loading,
+        fetchpriority: fetchpriority, class: image_class, width: image.width, height: image.height
+    }}
+    
+    {% if mob_image != blank %}
+      {{
+        mob_image
+        | image_url: width: mob_image.width
+        | image_tag:
+          alt: heading,
+          loading: loading,
+          fetchpriority: fetchpriority,
+          class: 'mobile_only max-w-full h-auto',
+          width: mob_image.width,
+          height: mob_image.height
+      }}
+    {% endif %}
+    
+  {% endif %}
+</div>

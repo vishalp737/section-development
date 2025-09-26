@@ -85,16 +85,22 @@
     flex-direction: row;
   }
 
-  .banner--small:not(.banner--adapt) {
-    min-height: 42rem;
+  .banner--small:not(.banner--adapt),
+  .banner--small:not(.banner--adapt) .slideshow__slide,
+  .banner--small:not(.banner--adapt) .slideshow__text-wrapper {
+    min-height: 36rem;
   }
 
-  .banner--medium:not(.banner--adapt) {
-    min-height: 56rem;
+  .banner--medium:not(.banner--adapt),
+  .banner--medium:not(.banner--adapt) .slideshow__slide,
+  .banner--medium:not(.banner--adapt) .slideshow__text-wrapper {
+    min-height: 52rem;
   }
 
-  .banner--large:not(.banner--adapt) {
-    min-height: 72rem;
+  .banner--large:not(.banner--adapt), 
+  .banner--large:not(.banner--adapt) .slideshow__slide,
+  .banner--large:not(.banner--adapt) .slideshow__text-wrapper {
+    min-height: 68rem;
   }
 
   .banner__content.banner__content--top-left {
@@ -218,6 +224,10 @@
   height: auto;
 }
 
+.banner:not(.banner--mobile-bottom):not(.email-signup-banner) .banner__box {
+  background: transparent;
+}
+
 @media screen and (max-width: 749px) {
   .banner--mobile-bottom .banner__media,
   .banner--stacked:not(.banner--mobile-bottom) .banner__media {
@@ -228,9 +238,6 @@
     height: auto;
   }
 
-  .banner:not(.banner--mobile-bottom):not(.email-signup-banner) .banner__box {
-    background: transparent;
-  }
 
   .banner:not(.banner--mobile-bottom) .banner__box {
     border: none;
@@ -383,16 +390,27 @@
   }
 }
 
-.banner::after,
 .banner__media::after {
   content: '';
   position: absolute;
   top: 0;
+  left: 0;
   background: #000000;
   opacity: 0;
   z-index: 1;
   width: 100%;
   height: 100%;
+}
+
+.ovlshw_ltr .banner__media::after {
+  opacity:1;
+  background: linear-gradient(90deg, #0000 62.91%, #000 91.37%);
+  transform: scaleX(-1);
+}
+
+.ovlshw_rtl .banner__media::after {
+  opacity:1;
+  background: linear-gradient(90deg, #0000 62.91%, #000 91.37%);
 }
 
 .banner__box > * + .banner__text {
@@ -416,6 +434,12 @@
 @media screen and (max-width: 749px) {
   .banner--stacked .banner__box {
     width: 100%;
+  }
+
+   .ovlshw_fullscreen .banner__media::after,
+  .ovlshw_ltr .banner__media::after,
+  .ovlshw_rtl .banner__media::after {
+     opacity:0;
   }
 }
 
@@ -480,6 +504,9 @@
   .banner:not(.slideshow) .inline-richtext a:hover,
   .banner:not(.slideshow) .rte a:hover {
     color: currentColor;
+  }
+  .banner__box {
+    height: 100%;
   }
 }
 
