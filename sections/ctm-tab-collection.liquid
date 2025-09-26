@@ -1,4 +1,6 @@
 <!-- sections/ctm-tab-collection -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"> 
+
 {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
 {{ 'section-featured-product.css' | asset_url | stylesheet_tag }}
 {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
@@ -49,7 +51,7 @@
 {%- endstyle -%}
 
 <div
-  class="ctm_tbcols ctm-swiper-arrow section-{{ section.id }}-padding {{ section.settings.extra_class }}"
+  class="ctm_tbcols ctm-swiper-arrow section-{{ section.id }}-padding color-{{ section.settings.color_scheme }} {{ section.settings.extra_class }}"
   data-featured-collection
 >
   <div class="page-width">
@@ -74,6 +76,7 @@
                 {% if block.settings.title != blank %}
                   {{ block.settings.title }}
                 {% else %}
+                 {% assign collection = collections[block.settings.collection] %}
                   {{ collection.title }}
                 {% endif %}
               </button>
@@ -167,7 +170,7 @@
                     {%- endif -%}
                     class="button button-primary"
                   >
-                    <span> Shop {{ block.settings.title -}}</span>
+                    <span>Shop All</span>
                   </a>
                 </div>
               {% endif %}
@@ -178,6 +181,8 @@
     </div>
   </div>
 </div>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -279,6 +284,12 @@
       "type": "richtext",
       "id": "section_subheading",
       "label": "Content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
     },
     {
       "type": "checkbox",

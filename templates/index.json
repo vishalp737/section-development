@@ -15,10 +15,17 @@
         "slide_VtFTe7": {
           "type": "slide",
           "settings": {
+            "vid_image": "image",
+            "enable_video_looping": false,
+            "opacity_effect": "none",
             "image_overlay_opacity": 0,
-            "heading": "Image slide",
+            "mobile_overlay": false,
             "heading_size": "h1",
-            "subheading": "Tell your brand's story through images",
+            "heading": "Image slide",
+            "subheading": "<p>Tell your brand's story through images</p>",
+            "color_scheme": "",
+            "shadow_color": false,
+            "text_shadow_color": "",
             "button_label": "Button label",
             "link": "",
             "sbutton_label": "Button label",
@@ -26,17 +33,23 @@
             "show_text_box": true,
             "box_align": "middle-center",
             "text_alignment": "center",
-            "text_alignment_mobile": "center",
-            "color_scheme": ""
+            "text_alignment_mobile": "center"
           }
         },
         "slide_77Ar3U": {
           "type": "slide",
           "settings": {
+            "vid_image": "image",
+            "enable_video_looping": false,
+            "opacity_effect": "none",
             "image_overlay_opacity": 0,
-            "heading": "Image slide",
+            "mobile_overlay": false,
             "heading_size": "h1",
-            "subheading": "Tell your brand's story through images",
+            "heading": "Image slide",
+            "subheading": "<p>Tell your brand's story through images</p>",
+            "color_scheme": "",
+            "shadow_color": false,
+            "text_shadow_color": "",
             "button_label": "Button label",
             "link": "",
             "sbutton_label": "Button label",
@@ -44,8 +57,7 @@
             "show_text_box": true,
             "box_align": "middle-center",
             "text_alignment": "center",
-            "text_alignment_mobile": "center",
-            "color_scheme": ""
+            "text_alignment_mobile": "center"
           }
         }
       },
@@ -58,45 +70,104 @@
         "layout": "full_bleed",
         "slide_height": "medium",
         "show_slider_nav": false,
+        "slider_dots": true,
         "slider_visual": "counter",
         "auto_rotate": false,
         "change_slides_speed": 5,
-        "image_behavior": "none",
         "show_text_below": true,
         "accessibility_info": "Slideshow about our brand"
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
+    "ctm_tab_collection_QVFDwB": {
+      "type": "ctm-tab-collection",
+      "blocks": {
+        "category_9qxEiV": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "singleproduct": "adjustable-dumbbells-set-20kg",
+            "show_dynamic_checkout": true,
+            "col_pdp": false,
+            "collection": "books-media",
+            "product_limit": 8
+          }
+        },
+        "category_bVFyda": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "singleproduct": "",
+            "show_dynamic_checkout": true,
+            "col_pdp": true,
+            "collection": "clothing",
+            "product_limit": 8
+          }
+        },
+        "category_YFqqAE": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "singleproduct": "",
+            "show_dynamic_checkout": true,
+            "col_pdp": true,
+            "collection": "electronics",
+            "product_limit": 8
+          }
+        },
+        "category_tX4Njd": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "singleproduct": "",
+            "show_dynamic_checkout": true,
+            "col_pdp": true,
+            "collection": "home-garden",
+            "product_limit": 8
+          }
+        },
+        "category_yW6Fqf": {
+          "type": "category",
+          "settings": {
+            "title": "",
+            "singleproduct": "",
+            "show_dynamic_checkout": true,
+            "col_pdp": true,
+            "collection": "sports-fitness",
+            "product_limit": 8
+          }
+        }
+      },
+      "block_order": [
+        "category_9qxEiV",
+        "category_bVFyda",
+        "category_YFqqAE",
+        "category_tX4Njd",
+        "category_yW6Fqf"
+      ],
+      "name": "Custom Tab Collection",
       "settings": {
-        "collection": "all",
-        "products_to_show": 8,
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "columns_desktop": 4,
-        "enable_desktop_slider": false,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
+        "section_heading": "",
+        "section_subheading": "",
         "color_scheme": "scheme-1",
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 44,
-        "padding_bottom": 36
+        "hide_shopall": false,
+        "media_size": "medium",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "quick_add": "standard",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "re_padding_top": 34,
+        "re_padding_bottom": 34,
+        "extra_class": ""
       }
     }
   },
   "order": [
     "slideshow_XW7KFG",
-    "featured_collection"
+    "ctm_tab_collection_QVFDwB"
   ]
 }
